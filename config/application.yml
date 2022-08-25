@@ -1,3 +1,5 @@
 development:
   SECRET_KEY: thisisasecret  
 production:
+  SECRET_KEY: thisisasecret  
+  
