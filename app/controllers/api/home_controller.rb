@@ -2,7 +2,7 @@ class Api::HomeController < ApplicationController
   def login
     user = User.find_by_email(login_params[:email])
     if user.nil?
-      response_failed(:not_found, ["User not found"])
+      response_failed(:not_found, ["User's email does not exist"])
     else
     #   if user.status == Constants::USER_STATUS[:BLOCK]
     #     return response_failed(:ok, [I18n.t("api.errors.messages.login_block_failed")])
@@ -11,7 +11,7 @@ class Api::HomeController < ApplicationController
       if user&.authenticate(login_params[:password])
         response_success({ user: serializer_modal(user, UserSerializer), token: encode_token_user(user) }, "Logged in successfully")
       else
-        response_failed(:ok, ["Login failed"])
+        response_failed(:ok, ["Your email or password is incorrect"])
       end
     end
   end

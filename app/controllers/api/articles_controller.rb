@@ -11,7 +11,11 @@ class Api::ArticlesController < Api::BaseController
 
   # GET /article/1
   def show
-    response_success({ article: serializer_modal(@article, ArticleSerializer) })
+    if @article
+      response_success({ article: serializer_modal(@article, ArticleSerializer) })
+    else
+      response_failed(:not_found, ["Article not found"])
+    end
   end
 
   # POST /article
@@ -51,12 +55,13 @@ class Api::ArticlesController < Api::BaseController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
-      @article = Article.find(params[:id])
+      @article = Article.find_by_id(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def article_params
-      params.require(:article).permit(:title, :description, :user_id)
+      # params.require(:article).permit(:title, :description, :user_id)
+      params.require(:article).permit(:title, :description)
       # params.permit(:title, :description, :user_id)
       # params.require(:article).permit(:title, :description)
     end
@@ -64,6 +69,6 @@ class Api::ArticlesController < Api::BaseController
     def is_owner
       return response_failed(:unauthorized, ["You must be logged in to update article"]) unless current_user
       # return response_failed(:unauthorized, ["You are not authorized to edit this article"]) unless current_user.id == @article.user.id
-      return response_failed(:unauthorized, ["You are not authorized to edit this article"]) unless current_user == @article.user
+      return response_failed(:unauthorized, ["You are not authorized to edit this article"]) unless current_user == @article.user || current_user.admin
     end
 end

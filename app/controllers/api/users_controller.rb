@@ -1,7 +1,7 @@
 # class Api::UsersController < ApplicationController
 class Api::UsersController < Api::BaseController
   # before_action :authorized, only: %i[ show ]
-  before_action :set_user, only: %i[ show update ]
+  before_action :set_user, only: %i[ show update destroy]
   before_action :is_same_user, only: %i[ update ]
 
   def index 
@@ -39,6 +39,12 @@ class Api::UsersController < Api::BaseController
     end
   end
 
+  def destroy
+    @user.destroy
+    msg = "Delete user account and all associated articles succesfully"
+    response_success(nil, msg)
+  end
+
   def current_user_info
     if current_user
       response_success({ user: serializer_modal(current_user, UserSerializer) })
@@ -52,6 +58,7 @@ class Api::UsersController < Api::BaseController
 
     # Use callbacks to share common setup or constraints between actions.
   def set_user
+    # debugger
     @user ||= User.find_by_id(params[:id])
   end
 
