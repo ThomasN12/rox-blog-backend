@@ -60,6 +60,9 @@ class Api::UsersController < Api::BaseController
   def set_user
     # debugger
     @user ||= User.find_by_id(params[:id])
+    # @user.articles.each do |article|
+    #   article.categories = article.categories
+    # end
   end
 
   def user_params

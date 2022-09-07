@@ -21,7 +21,6 @@ class Api::ArticlesController < Api::BaseController
   # POST /article
   def create
     return response_failed(:unauthorized, ["You must be logged in to update article"]) unless current_user
-
     @article = Article.new(article_params)
     @article.user_id = current_user.id
 
@@ -30,7 +29,7 @@ class Api::ArticlesController < Api::BaseController
       msg = "You have successfully created a new article"
       response_success({ article: serializer_modal(@article, ArticleSerializer) }, msg)
     else
-      response_failed(:unprocessable_entity, @article.errors.full_messages)
+      response_failed(:bad_request, @article.errors.full_messages)
     end
   end
 
@@ -41,7 +40,7 @@ class Api::ArticlesController < Api::BaseController
       msg = "You have successfully updated an article"
       response_success(@article, msg)
     else
-      response_failed(:unprocessable_entity, @article.errors.full_messages)
+      response_failed(:bad_request, @article.errors.full_messages)
     end
   end
 
@@ -61,7 +60,9 @@ class Api::ArticlesController < Api::BaseController
     # Only allow a list of trusted parameters through.
     def article_params
       # params.require(:article).permit(:title, :description, :user_id)
-      params.require(:article).permit(:title, :description)
+      # params.require(:article).permit(:title, :description, category_ids: [])
+      # params.require(:article).permit(:title, :description, :category_ids)
+      params.permit(:title, :description, category_ids: [])
       # params.permit(:title, :description, :user_id)
       # params.require(:article).permit(:title, :description)
     end
